@@ -1,0 +1,9 @@
+[project]
+name = "support-data-server"
+version = "0.1.0"
+description = "MCP server exposing read-only, session-scoped customer/ticket tools"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "../../backend/src"]
+testpaths = ["tests"]

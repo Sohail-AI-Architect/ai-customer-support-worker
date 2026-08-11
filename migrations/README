@@ -1,0 +1,13 @@
+# Database Migrations (Alembic)
+
+Alembic migrations for the AI Customer Support Worker. The config lives at the
+repo root (`alembic.ini`); this directory holds the migration environment
+(`env.py`) and revision scripts under `versions/`.
+
+Run from the repo root:
+
+    uv run --project backend alembic upgrade head
+    uv run --project backend alembic current
+    uv run --project backend alembic check
+
+See `docs/runbook.md` for full instructions.

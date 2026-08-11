@@ -1,0 +1,9 @@
+[project]
+name = "knowledge-server"
+version = "0.1.0"
+description = "MCP server exposing read-only knowledge.search over the approved knowledge base"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "../../backend/src"]
+testpaths = ["tests"]

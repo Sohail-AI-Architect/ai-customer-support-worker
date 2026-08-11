@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What is your return policy?",
+    "answer": "You may return eligible items within 30 days of delivery for a full refund. Items must be unused and in original packaging.",
+    "keywords": ["return", "returns", "policy", "refund"]
+  },
+  {
+    "question": "How do I reset my password?",
+    "answer": "To reset your password, go to the login page, select 'Forgot password', and follow the emailed link. The link expires in 1 hour.",
+    "keywords": ["password", "reset", "forgot", "login"]
+  },
+  {
+    "question": "How can I check the status of my order?",
+    "answer": "You can check your order status in the Orders section of your account, or ask me for the status of a specific order.",
+    "keywords": ["order", "status", "shipping", "delivery", "track"]
+  },
+  {
+    "question": "What are your business hours?",
+    "answer": "Our support team is available Monday to Friday, 9am to 6pm (local time).",
+    "keywords": ["hours", "business", "open", "available"]
+  }
+]

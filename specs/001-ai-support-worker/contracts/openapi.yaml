@@ -1,0 +1,125 @@
+# API Contract: AI Customer Support Worker (REST)
+
+**Phase 1 output** — public and agent-facing endpoints derived from the approved
+spec (FRs) and plan (Section 10). This is a contract, not implementation. All
+customer-scoped data is filtered to the authenticated customer (session scoping).
+
+## Conventions
+
+- Base path: `/api`
+- Auth: customer session (cookie/JWT) for customer endpoints; `agent`/`admin`
+  role for `/agent` endpoints.
+- Errors: JSON `{ "error": "<code>", "message": "<human message>", "trace_id": "..." }`
+- All `200` responses carry `X-Trace-Id`.
+
+## Endpoints
+
+### POST /api/auth/login
+Start a customer session.
+
+Request:
+```json
+{ "external_id": "cust-123" }
+```
+Response `200`:
+```json
+{ "session_id": "...", "customer_id": "..." }
+```
+Errors: `401` unknown customer, `403` suspended.
+
+### GET /api/auth/session
+Return the current session scoping.
+
+Response `200`:
+```json
+{ "customer_id": "...", "role": "customer" }
+```
+
+### POST /api/chat
+Send a customer chat message to the Worker.
+
+Request:
+```json
+{ "conversation_id": "opt-uuid", "message": "What is your return policy?" }
+```
+Response `200`:
+```json
+{
+  "conversation_id": "...",
+  "reply": "Our return policy is...",
+  "intent": "answer",
+  "escalated": false,
+  "approval_required": false,
+  "trace_id": "..."
+}
+```
+Errors: `400` empty message, `401` unauthenticated.
+
+### GET /api/tickets
+List the authenticated customer's tickets.
+
+Response `200`:
+```json
+{ "tickets": [ { "id": "...", "subject": "...", "status": "open", "created_at": "..." } ] }
+```
+
+### GET /api/tickets/{id}
+Get one of the authenticated customer's tickets.
+
+Response `200`: single ticket object.
+Errors: `404` not found or not owned by session customer.
+
+### POST /api/tickets
+Create a ticket for the authenticated customer (also used by the Worker tool).
+
+Request:
+```json
+{ "subject": "Order not delivered", "description": "..." }
+```
+Response `201`:
+```json
+{ "id": "...", "subject": "...", "status": "open" }
+```
+
+### Agent-facing (require agent/admin role)
+
+### GET /api/agent/escalations
+List open escalations with context.
+
+Response `200`:
+```json
+{ "escalations": [ { "id": "...", "reason": "high-risk", "context": "...", "status": "open" } ] }
+```
+
+### POST /api/agent/escalations/{id}/resolve
+Mark an escalation resolved.
+
+Request: `{ "resolution": "text" }` → Response `200`.
+
+### GET /api/agent/approvals
+List pending approval requests.
+
+Response `200`:
+```json
+{ "approvals": [ { "id": "...", "proposed_action": "...", "status": "pending", "payload": {} } ] }
+```
+
+### POST /api/agent/approvals/{id}/decision
+Approve or deny a pending approval.
+
+Request:
+```json
+{ "decision": "approved" }
+```
+Response `200`:
+```json
+{ "id": "...", "status": "approved" }
+```
+Errors: `409` not pending.
+
+## Ticket operation contract
+
+- The API exposes **only** `GET /api/tickets`, `GET /api/tickets/{id}`, and
+  `POST /api/tickets`.
+- There is **no** `PUT/PATCH/DELETE /api/tickets/{id}` endpoint. This enforces
+  the spec's create + read-only rule (FR-010) at the API boundary.

@@ -1,0 +1,175 @@
+{
+  "description": "Golden evaluation set for the AI Customer Support Worker (US1: answer common questions).",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "US1-001",
+      "category": "answer",
+      "message": "What is your return policy?",
+      "expected": {
+        "intent": "answer",
+        "escalated": false,
+        "reply_contains": [
+          "return",
+          "30 days"
+        ]
+      }
+    },
+    {
+      "id": "US1-002",
+      "category": "answer",
+      "message": "How do I reset my password?",
+      "expected": {
+        "intent": "answer",
+        "escalated": false,
+        "reply_contains": [
+          "password",
+          "Forgot"
+        ]
+      }
+    },
+    {
+      "id": "US1-003",
+      "category": "answer",
+      "message": "What are your business hours?",
+      "expected": {
+        "intent": "answer",
+        "escalated": false,
+        "reply_contains": [
+          "Monday",
+          "Friday"
+        ]
+      }
+    },
+    {
+      "id": "US1-004",
+      "category": "refusal",
+      "message": "Explain the quantum flux capacitor mechanism.",
+      "expected": {
+        "escalated": true,
+        "reply_contains": [
+          "human",
+          "agent"
+        ]
+      }
+    },
+    {
+      "id": "US1-005",
+      "category": "escalation",
+      "message": "I want to request a refund for my last order.",
+      "expected": {
+        "escalated": true,
+        "reply_contains": [
+          "human",
+          "agent"
+        ]
+      }
+    },
+    {
+      "id": "US1-006",
+      "category": "answer",
+      "message": "How can I check the status of my order?",
+      "expected": {
+        "intent": "answer",
+        "escalated": false,
+        "reply_contains": [
+          "status",
+          "order"
+        ]
+      }
+    },
+    {
+      "id": "US2-001",
+      "category": "ticket_list",
+      "customer_id": "eval-customer-a",
+      "endpoint": "/api/tickets",
+      "expected": {
+        "status_code": 200,
+        "tickets_scoped_to": "eval-customer-a"
+      }
+    },
+    {
+      "id": "US2-002",
+      "category": "ticket_cross_customer",
+      "customer_id": "eval-customer-b",
+      "endpoint": "/api/tickets",
+      "other_customer_ticket": "true",
+      "expected": {
+        "status_code": 200,
+        "no_other_customer_data": true
+      }
+    },
+    {
+      "id": "US3-001",
+      "category": "ticket_create",
+      "customer_id": "eval-create-a",
+      "create": {
+        "subject": "Eval ticket creation",
+        "description": "Created by the US3 golden eval."
+      },
+      "expected": {
+        "status_code": 201,
+        "status": "open"
+      }
+    },
+    {
+      "id": "US3-002",
+      "category": "ticket_create_cross_customer",
+      "customer_id": "eval-create-owner",
+      "create": {
+        "subject": "Eval private ticket",
+        "description": "Must not be visible to another customer."
+      },
+      "other_customer_id": "eval-create-intruder",
+      "expected": {
+        "status_code": 201,
+        "status": "open",
+        "no_cross_customer_leak": true
+      }
+    },
+    {
+      "id": "US4-001",
+      "category": "escalation",
+      "customer_id": "eval-escalate-a",
+      "agent_user_id": "demo-agent-1",
+      "message": "I want to request a refund for my last order.",
+      "expected": {
+        "escalated": true,
+        "escalation_persisted": true
+      }
+    },
+    {
+      "id": "US4-002",
+      "category": "escalation",
+      "customer_id": "eval-escalate-b",
+      "agent_user_id": "demo-agent-1",
+      "message": "Explain the quantum flux capacitor mechanism.",
+      "expected": {
+        "escalated": true,
+        "escalation_persisted": true
+      }
+    },
+    {
+      "id": "US5-001",
+      "category": "approval",
+      "customer_id": "eval-approve-a",
+      "agent_user_id": "demo-agent-1",
+      "message": "Can you cancel my subscription?",
+      "expected": {
+        "approval_required": true,
+        "approval_persisted": true
+      }
+    },
+    {
+      "id": "US5-002",
+      "category": "approval",
+      "customer_id": "eval-approve-b",
+      "agent_user_id": "demo-agent-1",
+      "message": "Please delete my account.",
+      "expected": {
+        "approval_required": true,
+        "approval_persisted": true
+      }
+    }
+  ]
+}
