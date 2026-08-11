@@ -17,6 +17,8 @@ export default defineConfig({
   fullyParallel: false,
   retries: 1,
   reporter: [["list"]],
+  globalSetup: "./e2e/global-setup",
+
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",

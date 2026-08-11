@@ -38,6 +38,10 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - backend
+    environment:
+      # Next dev proxy: point /api/* at the backend service (not localhost,
+      # which would be this container) — required for the UI->backend calls.
+      BACKEND_URL: http://backend:8000
     ports:
       - "3000:3000"
 
