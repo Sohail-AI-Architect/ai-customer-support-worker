@@ -8,6 +8,55 @@ approval for everything sensitive or high-risk.
 Built end-to-end with the Spec-Driven Development method: constitution →
 feature spec → architecture plan → tasks → TDD implementation → golden evaluation.
 
+## 🚀 Quick Access & Local Testing Routes
+
+Once the stack is running (see [Run & test locally](#run--test-locally)), open
+these in your browser:
+
+| Route | URL | What it's for |
+|---|---|---|
+| **Customer Chat UI** | [http://localhost:3000/chat](http://localhost:3000/chat) | Test **knowledge-base answers**, ticket retrieval, and escalations from the customer side |
+| **Agent Dashboard UI** | [http://localhost:3000/agent](http://localhost:3000/agent) | Manage **human escalations** and **approval gates** |
+| **Backend API Docs (Swagger)** | [http://localhost:8000/docs](http://localhost:8000/docs) | Explore every REST endpoint interactively |
+| **Health Check Endpoint** | [http://localhost:8000/health](http://localhost:8000/health) | Verify the backend is up (`{"status":"ok", ...}`) |
+
+## Run & test locally
+
+Clone the repo, then from the root:
+
+```bash
+# 1. Environment
+cp .env.example .env            # git-ignored; edit SESSION_SECRET for non-local
+
+# 2. Start the full stack (Postgres + backend + frontend)
+docker compose up -d
+
+# 3. Apply database migrations
+uv run --project backend alembic upgrade head
+
+# 4. Seed demo data (approved knowledge + demo agent for the agent queue)
+cd backend
+PYTHONPATH=src uv run python -m services.seed_knowledge
+PYTHONPATH=src uv run python -m services.seed_demo
+cd ..
+```
+
+Now open the routes above. Sample test prompts:
+
+- **Knowledge-base query** → in the chat UI, ask *"What is your return policy?"* or
+  *"What are your business hours?"* — you get an approved answer (no badge).
+- **Escalation** → ask *"I want to request a refund."* — the reply shows an
+  **escalated to human** badge; approve it in the agent dashboard.
+- **Sensitive human approval** → ask *"Can you cancel my subscription?"* — the
+  reply states it needs human approval and is **held, not executed**; then
+  **Approve**/**Deny** it in the agent dashboard.
+- **Raw API** → `curl http://localhost:8000/health`, or use the Swagger UI at
+  [http://localhost:8000/docs](http://localhost:8000/docs).
+
+> **Prerequisites:** Docker Desktop running, `uv` (Python), and `node`/`npm`.
+> A full first-run walkthrough lives in
+> [`specs/001-ai-support-worker/quickstart.md`](specs/001-ai-support-worker/quickstart.md).
+
 ## What it does
 
 - **Answers common questions** from an approved knowledge base — never fabricates
